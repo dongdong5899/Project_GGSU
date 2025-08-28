@@ -6,6 +6,14 @@
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GGSUResourceSubInstance.generated.h"
 
+UENUM()
+enum EResourceType
+{
+	None,
+	Wheat,
+	
+};
+
 /**
  * 
  */
@@ -17,9 +25,27 @@ class PROJECT_GGSU_API UGGSUResourceSubInstance : public UGameInstanceSubsystem
 	//GetGameInstance()->GetSubSystem<UGGSUResourceSubInstance>()
 
 public:
-	int GetGold() { return Gold; }
-	void AddGold(int value) { Gold += value; }
+	
+	uint32 GetResource(EResourceType resourceType) { return ResourceTable[resourceType]; }
+	void AddGold(EResourceType resourceType, uint32 value) { ResourceTable[resourceType] += value; }
+	void Remove(EResourceType resourceType, uint32 value)
+	{
+		if (ResourceTable[resourceType] >= value)
+			ResourceTable[resourceType] -= value;
+		else
+			ResourceTable[resourceType] = 0;
+	}
+	bool TryRemove(EResourceType resourceType, uint32 value)
+	{
+		if (ResourceTable[resourceType] >= value)
+		{
+			ResourceTable[resourceType] -= value;
+			return true;
+		}
+		return false;
+	}
 
 private:
 	int Gold;
+	TMap<EResourceType, uint32> ResourceTable;
 };
